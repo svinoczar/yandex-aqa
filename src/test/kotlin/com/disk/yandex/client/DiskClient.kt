@@ -2,6 +2,7 @@ package com.disk.yandex.client
 
 import io.restassured.RestAssured.given
 import io.restassured.response.Response
+import svinoczar.dev.com.disk.yandex.model.UpdateResourceRequest
 
 class DiskClient(
     private val token: String
@@ -43,11 +44,11 @@ class DiskClient(
             .get("/resources")
     }
 
-    fun updateResource(path: String, body: String): Response {
+    fun updateResource(path: String, request: UpdateResourceRequest): Response {
         return request()
             .contentType("application/json")
             .queryParam("path", path)
-            .body(body)
+            .body(request)
             .patch("/resources")
     }
 
