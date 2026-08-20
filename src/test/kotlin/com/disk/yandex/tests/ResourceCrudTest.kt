@@ -4,6 +4,7 @@ import com.disk.yandex.util.bodyAs
 import com.disk.yandex.configuration.TestBase
 import com.disk.yandex.model.request.UpdateResourceRequest
 import com.disk.yandex.model.response.ResourceResponse
+import com.disk.yandex.util.assertApiError
 import io.qameta.allure.Epic
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.assertAll
 @Epic("Disk API")
 @DisplayName("Disk - CRUD endpoints")
 class ResourceCrudTest : TestBase() {
-
+    // Positive cases:
     @Test
     @DisplayName("(PUT + GET) Создание и чтение директории")
     fun createAndGetFolder() {
@@ -122,5 +123,55 @@ class ResourceCrudTest : TestBase() {
         val resource = getResponse.bodyAs<ResourceResponse>()
 
         assertFalse(resource.customProperties.orEmpty().containsKey("environment"))
+    }
+
+    // Negative cases:
+    @Test
+    @DisplayName("(PUT) Повторное создание существующей директории")
+    fun createExistingFolder() {
+        val createResponse = diskClient.createFolder(uniqPath)
+        assertEquals(201, createResponse.statusCode)
+
+        val duplicateCreateResponse = diskClient.createFolder(uniqPath)
+
+        val error = duplicateCreateResponse.assertApiError(409)
+
+        assertEquals("DiskPathPointsToExistentDirectoryError", error.error)
+    }
+
+    @Test
+    @DisplayName("(GET) Получение несуществующего ресурса")
+    fun getMissingResource() {
+        val response = diskClient.getResource(uniqPath)
+
+        val error = response.assertApiError(404)
+
+        assertEquals("DiskNotFoundError", error.error)
+    }
+
+    @Test
+    @DisplayName("(PATCH) Обновление несуществующего ресурса")
+    fun updateMissingResource() {
+        val request = UpdateResourceRequest(
+            customProperties = mapOf(
+                "environment" to "test"
+            )
+        )
+
+        val response = diskClient.updateResource(uniqPath, request)
+
+        val error = response.assertApiError(404)
+
+        assertEquals("DiskNotFoundError", error.error)
+    }
+
+    @Test
+    @DisplayName("(DELETE) Удаление несуществующего ресурса")
+    fun deleteMissingResource() {
+        val response = diskClient.deleteResource(uniqPath)
+
+        val error = response.assertApiError(404)
+
+        assertEquals("DiskNotFoundError", error.error)
     }
 }
