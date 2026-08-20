@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 .kotlin
 .env
+/.allure/
 
 ### IntelliJ IDEA ###
 .idea/
