@@ -3,9 +3,15 @@ package com.disk.yandex.configuration
 import io.github.cdimascio.dotenv.dotenv
 
 object Config {
+    private val env = dotenv {
+        ignoreIfMissing = true
+    }
 
-    val env = dotenv()
-    val token = env["YANDEX_DISK_TOKEN"]
-        ?: error("YANDEX_DISK_TOKEN is not set in .env")
-    const val baseUrl = "https://cloud-api.yandex.net/v1/disk"
+    val token: String = System.getenv("YANDEX_DISK_TOKEN")
+        ?: env["YANDEX_DISK_TOKEN"]
+        ?: error("YANDEX_DISK_TOKEN is not set")
+
+    val baseUrl: String = System.getenv("YANDEX_DISK_BASE_URL")
+        ?: env["YANDEX_DISK_BASE_URL"]
+        ?: "https://cloud-api.yandex.net/v1/disk"
 }

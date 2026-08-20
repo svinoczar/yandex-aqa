@@ -1,18 +1,24 @@
 package com.disk.yandex.client
 
+import com.disk.yandex.model.request.UpdateResourceRequest
 import io.restassured.RestAssured.given
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.http.ContentType
 import io.restassured.response.Response
-import svinoczar.dev.com.disk.yandex.model.UpdateResourceRequest
+import io.restassured.specification.RequestSpecification
 
 class DiskClient(
-    private val token: String
+    token: String,
+    baseUrl: String
 ) {
-    private val baseUrl = "https://cloud-api.yandex.net/v1/disk"
+    private val requestSpecification = RequestSpecBuilder()
+        .setBaseUri(baseUrl)
+        .setAccept(ContentType.JSON)
+        .addHeader("Authorization", "OAuth $token")
+        .build()
 
-    private fun request() =
-        given()
-            .baseUri(baseUrl)
-            .header("Authorization", "OAuth $token")
+    private fun request(): RequestSpecification =
+        given().spec(requestSpecification)
 
     /*
         v1/disk/resources:
@@ -31,39 +37,52 @@ class DiskClient(
         - GET v1/disk/resources/upload
         - POST v1/disk/resources/upload
      */
-    fun deleteResource(path: String, permanently: Boolean = false): Response {
+    fun deleteResource(
+        path: String,
+        permanently: Boolean = false,
+        forceAsync: Boolean = false
+    ): Response {
         return request()
             .queryParam("path", path)
             .queryParam("permanently", permanently)
+            .queryParam("force_async", forceAsync)
             .delete("/resources")
     }
 
-    fun getResource(path: String): Response {
-        return request()
+    fun getResource(path: String, fields: String? = null): Response {
+        val request = request()
             .queryParam("path", path)
-            .get("/resources")
+
+        fields?.let { request.queryParam("fields", it) }
+
+        return request.get("/resources")
     }
 
-    fun updateResource(path: String, request: UpdateResourceRequest): Response {
+    fun updateResource(path: String, body: UpdateResourceRequest): Response {
         return request()
-            .contentType("application/json")
+            .contentType(ContentType.JSON)
             .queryParam("path", path)
-            .body(request)
+            .body(body)
             .patch("/resources")
     }
 
     fun createFolder(path: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("path", path)
             .put("/resources")
     }
 
-    fun copyResource(from: String, path: String): Response {
+    fun copyResource(
+        from: String,
+        path: String,
+        overwrite: Boolean = false,
+        forceAsync: Boolean = false
+    ): Response {
         return request()
-            .contentType("application/json")
             .queryParam("from", from)
             .queryParam("path", path)
+            .queryParam("overwrite", overwrite)
+            .queryParam("force_async", forceAsync)
             .post("/resources/copy")
     }
 
@@ -83,11 +102,17 @@ class DiskClient(
             .get("/resources/last-uploaded")
     }
 
-    fun moveResource(from: String, path: String): Response {
+    fun moveResource(
+        from: String,
+        path: String,
+        overwrite: Boolean = false,
+        forceAsync: Boolean = false
+    ): Response {
         return request()
-            .contentType("application/json")
             .queryParam("from", from)
             .queryParam("path", path)
+            .queryParam("overwrite", overwrite)
+            .queryParam("force_async", forceAsync)
             .post("/resources/move")
     }
 
@@ -98,7 +123,7 @@ class DiskClient(
 
     fun publishResource(path: String, body: String): Response {
         return request()
-            .contentType("application/json")
+            .contentType(ContentType.JSON)
             .queryParam("path", path)
             .body(body)
             .put("/resources/publish")
@@ -106,7 +131,6 @@ class DiskClient(
 
     fun unpublishResource(path: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("path", path)
             .put("/resources/unpublish")
     }
@@ -119,7 +143,6 @@ class DiskClient(
 
     fun uploadResource(path: String, url: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("path", path)
             .queryParam("url", url)
             .post("/resources/upload")
@@ -146,14 +169,12 @@ class DiskClient(
 
     fun updatePublicLinksSettings(publicKey: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("public_key", publicKey)
             .patch("/public/resources/public-settings")
     }
 
     fun savePublicResourceToDisk(publicKey: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("public_key", publicKey)
             .post("/public/resources/save-to-disk")
     }
@@ -177,7 +198,6 @@ class DiskClient(
 
     fun restoreFromTrash(path: String): Response {
         return request()
-            .contentType("application/json")
             .queryParam("path", path)
             .post("/trash/resources/restore")
     }
@@ -188,7 +208,8 @@ class DiskClient(
      */
     fun getAsyncOperationStatus(operationId: String): Response {
         return request()
-            .get("/operations/$operationId")
+            .pathParam("operationId", operationId)
+            .get("/operations/{operationId}")
     }
 
     /*
@@ -198,5 +219,27 @@ class DiskClient(
     fun getDiskInfo(): Response {
         return request()
             .get("")
+    }
+
+    fun uploadFile(
+        uploadLink: String,
+        content: String,
+        contentType: String = ContentType.TEXT.toString()
+    ): Response {
+        return given()
+            .contentType(contentType)
+            .body(content)
+            .put(uploadLink)
+    }
+
+    fun uploadFile(
+        uploadLink: String,
+        content: ByteArray,
+        contentType: String = ContentType.BINARY.toString()
+    ): Response {
+        return given()
+            .contentType(contentType)
+            .body(content)
+            .put(uploadLink)
     }
 }
