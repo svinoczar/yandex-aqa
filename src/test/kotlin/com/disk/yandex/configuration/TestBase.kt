@@ -1,26 +1,27 @@
 package com.disk.yandex.configuration
 
-import com.disk.yandex.client.DiskClient
-import io.github.cdimascio.dotenv.dotenv
-import org.junit.jupiter.api.AfterEach
+import io.restassured.RestAssured
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import io.qameta.allure.restassured.AllureRestAssured
+import java.util.UUID
 
 abstract class TestBase {
+    protected lateinit var uniqName: String
+    protected lateinit var uniqPath: String
 
-    protected lateinit var diskClient: DiskClient
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun configure() {
+            RestAssured.filters(AllureRestAssured())
+            RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
+        }
+    }
 
     @BeforeEach
     fun setUp() {
-        val env = dotenv()
-
-        val token = env["YANDEX_DISK_TOKEN"]
-            ?: error("YANDEX_DISK_TOKEN is not set in .env")
-
-        diskClient = DiskClient(token)
-    }
-
-    @AfterEach
-    fun tearDown() {
-
+        uniqName = "autotest-${UUID.randomUUID()}"
+        uniqPath = "/${uniqName}"
     }
 }
