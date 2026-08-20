@@ -30,90 +30,98 @@ class DiskClient(
         - GET v1/disk/resources/upload
         - POST v1/disk/resources/upload
      */
-    fun deleteResource(path: String): Response {
+    fun deleteResource(path: String, permanently: Boolean = false): Response {
         return request()
-                .queryParam("path", path)
-                .delete("/resources")
+            .queryParam("path", path)
+            .queryParam("permanently", permanently)
+            .delete("/resources")
     }
 
     fun getResource(path: String): Response {
         return request()
-                .queryParam("path", path)
-                .get("/resources")
+            .queryParam("path", path)
+            .get("/resources")
     }
 
     fun updateResource(path: String, body: String): Response {
         return request()
-                .queryParam("path", path)
-                .body(body)
-                .patch("/resources")
+            .contentType("application/json")
+            .queryParam("path", path)
+            .body(body)
+            .patch("/resources")
     }
 
     fun createFolder(path: String): Response {
         return request()
-                .queryParam("path", path)
-                .put("/resources")
+            .contentType("application/json")
+            .queryParam("path", path)
+            .put("/resources")
     }
 
     fun copyResource(from: String, path: String): Response {
         return request()
-                .queryParam("from", from)
-                .queryParam("path", path)
-                .post("/resources/copy")
+            .contentType("application/json")
+            .queryParam("from", from)
+            .queryParam("path", path)
+            .post("/resources/copy")
     }
 
     fun getDownloadResource(path: String): Response {
         return request()
-                .queryParam("path", path)
-                .get("/resources/download")
+            .queryParam("path", path)
+            .get("/resources/download")
     }
 
     fun getFilesResource(): Response {
         return request()
-                .get("/resources/files")
+            .get("/resources/files")
     }
 
     fun getLastUploadedResources(): Response {
         return request()
-                .get("/resources/last-uploaded")
+            .get("/resources/last-uploaded")
     }
 
     fun moveResource(from: String, path: String): Response {
         return request()
-                .queryParam("from", from)
-                .queryParam("path", path)
-                .post("/resources/move")
+            .contentType("application/json")
+            .queryParam("from", from)
+            .queryParam("path", path)
+            .post("/resources/move")
     }
 
     fun getPublicResources(): Response {
         return request()
-                .get("/resources/public")
+            .get("/resources/public")
     }
 
     fun publishResource(path: String, body: String): Response {
         return request()
-                .queryParam("path", path)
-                .body(body)
-                .put("/resources/publish")
+            .contentType("application/json")
+            .queryParam("path", path)
+            .body(body)
+            .put("/resources/publish")
     }
 
     fun unpublishResource(path: String): Response {
         return request()
-                .queryParam("path", path)
-                .put("/resources/unpublish")
+            .contentType("application/json")
+            .queryParam("path", path)
+            .put("/resources/unpublish")
     }
 
     fun getUploadLink(path: String): Response {
         return request()
-                .queryParam("path", path)
-                .get("/resources/upload")
+            .queryParam("path", path)
+            .get("/resources/upload")
     }
 
     fun uploadResource(path: String, url: String): Response {
         return request()
-                .queryParam("path", path)
-                .queryParam("url", url)
-                .post("/resources/upload")
+            .contentType("application/json")
+            .queryParam("path", path)
+            .queryParam("url", url)
+            .post("/resources/upload")
     }
 
     /*
@@ -137,12 +145,14 @@ class DiskClient(
 
     fun updatePublicLinksSettings(publicKey: String): Response {
         return request()
+            .contentType("application/json")
             .queryParam("public_key", publicKey)
             .patch("/public/resources/public-settings")
     }
 
     fun savePublicResourceToDisk(publicKey: String): Response {
         return request()
+            .contentType("application/json")
             .queryParam("public_key", publicKey)
             .post("/public/resources/save-to-disk")
     }
@@ -166,6 +176,7 @@ class DiskClient(
 
     fun restoreFromTrash(path: String): Response {
         return request()
+            .contentType("application/json")
             .queryParam("path", path)
             .post("/trash/resources/restore")
     }
