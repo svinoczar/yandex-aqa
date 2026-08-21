@@ -10,7 +10,6 @@ import com.disk.yandex.util.bodyAs
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
@@ -47,7 +46,7 @@ class OperationTest : TestBase() {
         assertAll(
             { assertTrue(operationLink.href.isNotBlank()) },
             { assertEquals("GET", operationLink.method) },
-            { assertFalse(operationLink.templated ?: true) },
+            { assertEquals(false, operationLink.templated) },
             { assertTrue(operationId.isNotBlank()) }
         )
 

@@ -32,7 +32,7 @@ class TrashResourceTest : TestBase() {
     }
 
     @Test
-    @DisplayName("(PUT + DELETE + POST + GET) Восстановление директории из корзины")
+    @DisplayName("(PUT + DELETE + PUT + GET) Восстановление директории из корзины")
     fun restoreFolderFromTrash() {
         createFolderAndMoveToTrash()
 
