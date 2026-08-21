@@ -227,6 +227,7 @@ class DiskClient(
         contentType: String = ContentType.TEXT.toString()
     ): Response {
         return given()
+            .urlEncodingEnabled(false)
             .contentType(contentType)
             .body(content)
             .put(uploadLink)
@@ -238,8 +239,15 @@ class DiskClient(
         contentType: String = ContentType.BINARY.toString()
     ): Response {
         return given()
+            .urlEncodingEnabled(false)
             .contentType(contentType)
             .body(content)
             .put(uploadLink)
+    }
+
+    fun downloadFile(downloadLink: String): Response {
+        return given()
+            .urlEncodingEnabled(false)
+            .get(downloadLink)
     }
 }
