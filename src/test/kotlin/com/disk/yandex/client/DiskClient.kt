@@ -237,9 +237,12 @@ class DiskClient(
         v1/disk:
         - GET v1/disk
      */
-    fun getDiskInfo(): Response {
-        return request()
-            .get("")
+    fun getDiskInfo(fields: String? = null): Response {
+        val request = request()
+
+        fields?.let { request.queryParam("fields", it) }
+
+        return request.get("")
     }
 
     fun uploadFile(
