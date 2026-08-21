@@ -28,14 +28,10 @@ class DiskClient(
         - PUT v1/disk/resources
         - POST v1/disk/resources/copy
         - GET v1/disk/resources/download
-        - GET v1/disk/resources/files
-        - GET v1/disk/resources/last-uploaded
         - POST v1/disk/resources/move
-        - GET v1/disk/resources/public
         - PUT v1/disk/resources/publish
         - PUT v1/disk/resources/unpublish
         - GET v1/disk/resources/upload
-        - POST v1/disk/resources/upload
      */
     fun deleteResource(
         path: String,
@@ -92,16 +88,6 @@ class DiskClient(
             .get("/resources/download")
     }
 
-    fun getFilesResource(): Response {
-        return request()
-            .get("/resources/files")
-    }
-
-    fun getLastUploadedResources(): Response {
-        return request()
-            .get("/resources/last-uploaded")
-    }
-
     fun moveResource(
         from: String,
         path: String,
@@ -114,11 +100,6 @@ class DiskClient(
             .queryParam("overwrite", overwrite)
             .queryParam("force_async", forceAsync)
             .post("/resources/move")
-    }
-
-    fun getPublicResources(): Response {
-        return request()
-            .get("/resources/public")
     }
 
     fun publishResource(path: String): Response {
@@ -139,19 +120,10 @@ class DiskClient(
             .get("/resources/upload")
     }
 
-    fun uploadResource(path: String, url: String): Response {
-        return request()
-            .queryParam("path", path)
-            .queryParam("url", url)
-            .post("/resources/upload")
-    }
-
     /*
         v1/disk/public/resources:
         - GET v1/disk/public/resources
         - GET v1/disk/public/resources/download
-        - PATCH v1/disk/public/resources/public-settings
-        - POST v1/disk/public/resources/save-to-disk
      */
     fun getPublicResource(publicKey: String): Response {
         return request()
@@ -163,18 +135,6 @@ class DiskClient(
         return request()
             .queryParam("public_key", publicKey)
             .get("/public/resources/download")
-    }
-
-    fun updatePublicLinksSettings(publicKey: String): Response {
-        return request()
-            .queryParam("public_key", publicKey)
-            .patch("/public/resources/public-settings")
-    }
-
-    fun savePublicResourceToDisk(publicKey: String): Response {
-        return request()
-            .queryParam("public_key", publicKey)
-            .post("/public/resources/save-to-disk")
     }
 
     /*
