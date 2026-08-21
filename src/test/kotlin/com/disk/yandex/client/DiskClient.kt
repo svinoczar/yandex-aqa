@@ -183,23 +183,46 @@ class DiskClient(
         v1/disk/trash/resources:
         - DELETE v1/disk/trash/resources
         - GET v1/disk/trash/resources
-        - POST v1/disk/public/resources/restore
+        - PUT v1/disk/trash/resources/restore
      */
-    fun cleanTrash(): Response {
+    fun deleteTrashResource(
+        path: String,
+        forceAsync: Boolean = false
+    ): Response {
         return request()
+            .queryParam("path", path)
+            .queryParam("force_async", forceAsync)
             .delete("/trash/resources")
     }
 
-    fun getTrash(path: String): Response {
-        return request()
+    fun getTrashResource(
+        path: String,
+        limit: Int? = null,
+        sort: String? = null
+    ): Response {
+        val request = request()
             .queryParam("path", path)
-            .get("/trash/resources")
+
+        limit?.let { request.queryParam("limit", it) }
+        sort?.let { request.queryParam("sort", it) }
+
+        return request.get("/trash/resources")
     }
 
-    fun restoreFromTrash(path: String): Response {
-        return request()
+    fun restoreFromTrash(
+        path: String,
+        name: String? = null,
+        overwrite: Boolean = false,
+        forceAsync: Boolean = false
+    ): Response {
+        val request = request()
             .queryParam("path", path)
-            .post("/trash/resources/restore")
+            .queryParam("overwrite", overwrite)
+            .queryParam("force_async", forceAsync)
+
+        name?.let { request.queryParam("name", it) }
+
+        return request.put("/trash/resources/restore")
     }
 
     /*

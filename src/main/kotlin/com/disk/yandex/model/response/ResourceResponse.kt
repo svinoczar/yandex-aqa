@@ -1,6 +1,7 @@
 package com.disk.yandex.model.response
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
@@ -12,5 +13,7 @@ data class ResourceResponse(
     val type: String,
     val size: Long? = null,
     val mimeType: String? = null,
-    val customProperties: Map<String, String>? = null
+    val customProperties: Map<String, String>? = null,
+    @JsonProperty("_embedded")
+    val embedded: ResourceListResponse? = null
 )
