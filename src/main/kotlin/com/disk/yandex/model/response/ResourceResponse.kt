@@ -13,6 +13,8 @@ data class ResourceResponse(
     val type: String,
     val size: Long? = null,
     val mimeType: String? = null,
+    val publicKey: String? = null,
+    val publicUrl: String? = null,
     val customProperties: Map<String, String>? = null,
     @JsonProperty("_embedded")
     val embedded: ResourceListResponse? = null

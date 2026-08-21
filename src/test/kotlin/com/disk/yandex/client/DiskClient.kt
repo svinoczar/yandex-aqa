@@ -121,11 +121,9 @@ class DiskClient(
             .get("/resources/public")
     }
 
-    fun publishResource(path: String, body: String): Response {
+    fun publishResource(path: String): Response {
         return request()
-            .contentType(ContentType.JSON)
             .queryParam("path", path)
-            .body(body)
             .put("/resources/publish")
     }
 
