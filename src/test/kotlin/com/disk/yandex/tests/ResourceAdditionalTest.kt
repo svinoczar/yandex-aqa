@@ -5,12 +5,15 @@ import com.disk.yandex.configuration.TestBase
 import com.disk.yandex.model.response.ResourceResponse
 import com.disk.yandex.util.assertApiError
 import io.qameta.allure.Epic
+import io.qameta.allure.Feature
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 
-@Epic("Disk API")
+@Epic("Yandex Disk API")
+@Feature("Copy and move resources")
 @DisplayName("Disk - additional resource endpoints")
 class ResourceAdditionalTest : TestBase() {
     // Positive cases:
@@ -79,6 +82,7 @@ class ResourceAdditionalTest : TestBase() {
 
     // Negative cases:
     @Test
+    @Tag("negative")
     @DisplayName("(POST) Копирование в существующую директорию без перезаписи")
     fun copyFolderToExistingDestinationWithoutOverwrite() {
         val sourcePath = "$uniqPath/source"
@@ -100,6 +104,7 @@ class ResourceAdditionalTest : TestBase() {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("(POST) Перемещение несуществующего ресурса")
     fun moveMissingResource() {
         val destinationPath = "$uniqPath/destination"

@@ -6,13 +6,16 @@ import com.disk.yandex.model.request.UpdateResourceRequest
 import com.disk.yandex.model.response.ResourceResponse
 import com.disk.yandex.util.assertApiError
 import io.qameta.allure.Epic
+import io.qameta.allure.Feature
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 
-@Epic("Disk API")
+@Epic("Yandex Disk API")
+@Feature("Resource CRUD")
 @DisplayName("Disk - CRUD endpoints")
 class ResourceCrudTest : TestBase() {
     // Positive cases:
@@ -127,6 +130,7 @@ class ResourceCrudTest : TestBase() {
 
     // Negative cases:
     @Test
+    @Tag("negative")
     @DisplayName("(PUT) Повторное создание существующей директории")
     fun createExistingFolder() {
         val createResponse = diskClient.createFolder(uniqPath)
@@ -140,6 +144,7 @@ class ResourceCrudTest : TestBase() {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("(GET) Получение несуществующего ресурса")
     fun getMissingResource() {
         val response = diskClient.getResource(uniqPath)
@@ -150,6 +155,7 @@ class ResourceCrudTest : TestBase() {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("(PATCH) Обновление несуществующего ресурса")
     fun updateMissingResource() {
         val request = UpdateResourceRequest(
@@ -166,6 +172,7 @@ class ResourceCrudTest : TestBase() {
     }
 
     @Test
+    @Tag("negative")
     @DisplayName("(DELETE) Удаление несуществующего ресурса")
     fun deleteMissingResource() {
         val response = diskClient.deleteResource(uniqPath)
